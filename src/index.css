@@ -29,3 +29,44 @@ h1, h2, h3, h4, h5, h6, .font-headline {
   font-variation-settings: 'FILL' 1;
 }
 
+/* Reuse selected states from html */
+.hobby-card {
+  transition: all 0.2s ease-in-out;
+}
+.hobby-card.selected {
+  background-color: #4F5148;
+  border-color: #4F5148;
+  transform: scale(0.98);
+}
+.hobby-card.selected .card-title,
+.hobby-card.selected .card-count {
+  color: #F5F3ED;
+}
+.hobby-card.selected .card-icon {
+  color: #4F5148;
+}
+.hobby-card.selected .bg-background\/90 {
+  background-color: #E8DCDC !important;
+}
+.hobby-card.selected .check-icon {
+  background-color: #E8DCDC !important;
+  color: #272822 !important;
+  opacity: 1;
+  transform: scale(1);
+}
+.hobby-card.selected .image-overlay {
+  opacity: 0.8;
+}
+.check-icon {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #E8DCDC;
+  border-radius: 10px;
+}

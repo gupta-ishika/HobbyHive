@@ -1,5 +1,43 @@
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
+
 export default function App() {
   return (
-    <h1>Hobby Hub</h1>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Auth routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Protected Onboarding */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/onboarding/hobbies" element={<HobbySelectionMinimal />} />
+          </Route>
+
+          {/* 404 Fallback */}
+          <Route
+            path="*"
+            element={
+              <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text px-4">
+                <h1 className="font-headline font-black text-4xl">Page not found</h1>
+                <p className="text-text/60 mt-2">The page you are looking for does not exist.</p>
+                <Link
+                  to="/login"
+                  className="mt-6 inline-flex items-center justify-center font-bold rounded-lg bg-primary text-background px-6 py-2.5"
+                >
+                  Go to Login
+                </Link>
+              </div>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
