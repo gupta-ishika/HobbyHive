@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
@@ -10,8 +11,8 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Auth routes */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Public routes */}
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
@@ -28,10 +29,10 @@ export default function App() {
                 <h1 className="font-headline font-black text-4xl">Page not found</h1>
                 <p className="text-text/60 mt-2">The page you are looking for does not exist.</p>
                 <Link
-                  to="/login"
+                  to="/"
                   className="mt-6 inline-flex items-center justify-center font-bold rounded-lg bg-primary text-background px-6 py-2.5"
                 >
-                  Go to Login
+                  Go home
                 </Link>
               </div>
             }
