@@ -5,6 +5,8 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
+import Feed from "./pages/Feed";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -16,9 +18,11 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Onboarding */}
+          {/* Protected routes — redirect to /login if unauthenticated */}
           <Route element={<ProtectedRoute />}>
             <Route path="/onboarding/hobbies" element={<HobbySelectionMinimal />} />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/profile/me" element={<Profile />} />
           </Route>
 
           {/* 404 Fallback */}
