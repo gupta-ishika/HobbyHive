@@ -7,6 +7,9 @@ import Signup from "./pages/Signup";
 import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import Communities from "./pages/Communities";
+import CommunityDetails from "./pages/CommunityDetails";
+import Events from "./pages/Events";
 
 export default function App() {
   return (
@@ -22,7 +25,11 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/onboarding/hobbies" element={<HobbySelectionMinimal />} />
             <Route path="/feed" element={<Feed />} />
+            <Route path="/communities" element={<Communities />} />
+            <Route path="/communities/:id" element={<CommunityDetails />} />
+            <Route path="/events" element={<Events />} />
             <Route path="/profile/me" element={<Profile />} />
+            <Route path="/profile/:id" element={<Profile />} />
           </Route>
 
           {/* 404 Fallback */}
@@ -46,3 +53,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
