@@ -1,18 +1,18 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 
 function CategoryCard({ icon, title, desc, badge, extra }) {
   return (
-    <div className="bg-secondary rounded-2xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+    <div className="bg-surface rounded-2xl p-6 border border-border relative overflow-hidden group card-hover flex flex-col justify-between">
       <div className="flex justify-between items-start mb-6">
-        <div className="bg-accent text-primary p-3 rounded-xl inline-block">
-          <span className="material-symbols-outlined text-2xl">{icon}</span>
+        <div className="w-11 h-11 rounded-xl bg-accent text-primary flex items-center justify-center">
+          <span className="material-symbols-outlined text-xl">{icon}</span>
         </div>
-        {badge && <span className="bg-background px-3 py-1 rounded-full text-xs font-bold text-text">{badge}</span>}
+        {badge && <span className="bg-background border border-border px-3 py-1 rounded-full text-xs font-semibold text-text">{badge}</span>}
       </div>
       <div>
-        <h3 className="text-xl font-bold font-headline text-text mb-2 group-hover:text-primary transition-colors">{title}</h3>
-        <p className="text-sm text-text opacity-80">{desc}</p>
+        <h3 className="text-lg font-bold font-headline text-text mb-1.5 group-hover:text-primary transition-colors leading-tight">{title}</h3>
+        <p className="text-sm text-text/60 leading-relaxed">{desc}</p>
         {extra}
       </div>
     </div>
@@ -29,8 +29,8 @@ export default function Landing() {
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-accent rounded-full opacity-50 blur-3xl -z-10" />
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-secondary rounded-full opacity-60 blur-3xl -z-10" />
           <div className="max-w-2xl flex-1 z-10 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-primary font-label text-sm mb-6 uppercase tracking-wider font-bold">
-              <span className="material-symbols-outlined text-sm">stars</span> Join 10k+ Creators
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border text-primary font-label text-sm mb-6 uppercase tracking-wider font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" /> Join 10k+ Creators
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold font-headline text-text leading-tight mb-6 tracking-tight">
               Discover Your <br />
@@ -57,8 +57,8 @@ export default function Landing() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] bg-secondary border-8 border-background">
               <img
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzihpS1gfTW0V2FqHPEQ36EFsUvKbd8Ab2vxhLC-IG7x8tfjbauGS5gpTL8BO3O5uJQwYRkVWAWUn_atEk8_6W7-zGXMGvWNfw7oLEGtp8idZGbr0FP50192GOLq93MSW3FAoNXgGXqyrCOvq-z5U7rSe3IBErD-HQKM-6tUehcvimXqFr4Hub590GozgWo6Yk1WfS_ju2qjvDOsiOHs53sJXM7OGfO5IOcLGSQMjAjqFQHL6bULk_QgA2foq2LY-EmtNMKQ1c2z7Q"
-                alt="community"
+                src="/hero-creator.jpg"
+                alt="Creator smiling while using the mobile community app in her studio"
               />
               <div className="absolute top-8 -left-6 bg-background rounded-xl p-4 shadow-xl border border-secondary flex items-center gap-3">
                 <div className="bg-accent rounded-full p-2 text-primary"><span className="material-symbols-outlined">favorite</span></div>
@@ -66,8 +66,8 @@ export default function Landing() {
               </div>
               <div className="absolute bottom-12 -right-8 bg-background rounded-xl p-4 shadow-xl border border-secondary">
                 <div className="flex -space-x-2 mb-2">
-                  <img className="w-8 h-8 rounded-full border-2 border-background object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ7vcOXZS6C5VKkm8IqdQfAS62K8YA9szbw4qHu9kHtlxleg_bK0tGZRgGx7pfr6twaZpsLFScca4UY7AJToWwYR4NhpT_D42EZ_Ey1drs1PVYdgKYIuLpyWY-2noMjj6Fh2fnfK1tpagWse6ntCPtXYa5wzQlgiA0mggxq-5oMK2Q5UONU1Du9ypkJrzP54J4WEcYckj0R1W9rNPCyaep1BltK7jNDEuCtxK6B-LZnTXlrT1zJ85oeyX0ZCtV1NLORbiev4eSlyub" alt="" />
-                  <img className="w-8 h-8 rounded-full border-2 border-background object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiaKs2tpMknmY2IDUMaCt449gs5_Zw5CsoHNflXaB4HFaVLU-Qx8Mm8MUnPqVpoTSP069pOEBsEPtWIfg6DbqMJjl6aqJviurBFE3XBysiXatLkjkz9CQz0OmDdUh1p_4baElj2anpih6AgXslwaQqJFx3d5bgkQCWiv08REfcOWJSn-OEg-YdCUQcQ6UCOn3W9fDZRkF4WRyaofok2XtD0POVh3psVk-vDbtJNXf32FWzfGspHregNiXdmqbJai3xBqbOBgc-w7Ik" alt="" />
+                  <img className="w-8 h-8 rounded-full border-2 border-background object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Member" />
+                  <img className="w-8 h-8 rounded-full border-2 border-background object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Member" />
                   <div className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-xs font-bold text-primary">+12</div>
                 </div>
                 <p className="text-xs font-bold text-text">Active Members</p>
@@ -78,91 +78,100 @@ export default function Landing() {
 
         {/* Categories */}
         <section className="py-24 max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold font-headline text-text mb-4 tracking-tight">Explore Categories</h2>
-            <p className="text-lg text-text opacity-80">Dive into a wide array of interests. Find exactly what sparks your curiosity.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <div>
+              <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-2">Categories</p>
+              <h2 className="text-3xl md:text-4xl font-black font-headline text-text tracking-tight">Explore by interest</h2>
+            </div>
+            <p className="text-sm text-text/60 max-w-md leading-relaxed">Dive into a wide array of interests. Find exactly what sparks your curiosity.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
-            <div className="col-span-1 md:col-span-2 row-span-1 bg-secondary rounded-2xl p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent opacity-40 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
-              <div className="flex justify-between items-start mb-8 z-10">
-                <div className="bg-accent text-primary p-3 rounded-xl inline-block"><span className="material-symbols-outlined text-3xl">photo_camera</span></div>
-                <span className="bg-background px-3 py-1 rounded-full text-xs font-bold text-text">1.2k Communities</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 auto-rows-[220px]">
+            <div className="col-span-1 md:col-span-2 bg-surface rounded-2xl p-7 border border-border relative overflow-hidden group card-hover flex flex-col justify-between">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/40 rounded-bl-full -z-0 group-hover:scale-105 transition-transform duration-500" />
+              <div className="flex justify-between items-start z-10">
+                <div className="w-12 h-12 rounded-xl bg-accent text-primary flex items-center justify-center"><span className="material-symbols-outlined text-2xl">photo_camera</span></div>
+                <span className="bg-background border border-border px-3 py-1 rounded-full text-xs font-semibold text-text">1.2k Communities</span>
               </div>
               <div className="z-10">
-                <h3 className="text-2xl font-bold font-headline text-text mb-2 group-hover:text-primary transition-colors">Photography</h3>
-                <p className="text-text opacity-80 max-w-md">Master the art of light and shadow. Join local photowalks and critique groups.</p>
+                <h3 className="text-xl font-bold font-headline text-text mb-1.5">Photography</h3>
+                <p className="text-sm text-text/60 max-w-md leading-relaxed">Master the art of light and shadow. Join local photowalks and critique groups.</p>
               </div>
             </div>
-            <div className="col-span-1 row-span-2 bg-secondary rounded-2xl p-8 relative overflow-hidden group hover:shadow-xl transition-all flex flex-col justify-between border border-accent">
-              <div className="flex flex-col h-full">
-                <div className="bg-accent text-primary p-3 rounded-xl inline-block w-fit mb-6"><span className="material-symbols-outlined text-3xl">restaurant</span></div>
-                <h3 className="text-2xl font-bold font-headline mb-2 group-hover:text-primary">Culinary Arts</h3>
-                <p className="opacity-80 mb-8 flex-grow">From amateur baking to gourmet dinners, share recipes and techniques.</p>
-                <div className="bg-background rounded-xl p-4 mt-auto">
-                  <div className="flex items-center gap-3 mb-2"><span className="material-symbols-outlined text-primary text-sm">event</span><p className="text-xs font-bold">Upcoming Event</p></div>
-                  <p className="text-sm opacity-90">Sourdough Starter Workshop</p>
-                </div>
+            <div className="col-span-1 md:row-span-2 bg-surface rounded-2xl p-7 border border-border relative overflow-hidden group card-hover flex flex-col justify-between min-h-[260px] md:min-h-0">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-accent text-primary flex items-center justify-center mb-5"><span className="material-symbols-outlined text-2xl">restaurant</span></div>
+                <h3 className="text-xl font-bold font-headline mb-2">Culinary Arts</h3>
+                <p className="text-sm text-text/60 leading-relaxed">From amateur baking to gourmet dinners, share recipes and techniques.</p>
+              </div>
+              <div className="bg-background rounded-2xl p-4 mt-6 border border-border">
+                <div className="flex items-center gap-2 mb-1.5"><span className="material-symbols-outlined text-primary text-sm">event</span><p className="text-xs font-semibold tracking-wide uppercase text-text/60">Upcoming</p></div>
+                <p className="text-sm font-semibold text-text">Sourdough Starter Workshop</p>
+                <p className="text-xs text-text/50 mt-1">Sat, Oct 12 · 2:00 PM</p>
               </div>
             </div>
-            <CategoryCard icon="sports_esports" title="Gaming" desc="Tabletop, PC, or console. Find your squad." />
-            <CategoryCard icon="carpenter" title="Woodworking" desc="Crafting beauty from raw materials." />
+            <CategoryCard icon="sports_esports" title="Gaming" desc="Tabletop, PC, or console. Find your squad." badge="890+" />
+            <CategoryCard icon="carpenter" title="Woodworking" desc="Crafting beauty from raw materials." badge="320+" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-secondary rounded-2xl p-6 flex items-center gap-6 group hover:shadow-xl transition-all">
-              <div className="bg-accent text-primary p-4 rounded-xl flex-shrink-0"><span className="material-symbols-outlined text-3xl">local_florist</span></div>
-              <div><h3 className="text-xl font-bold font-headline mb-1 group-hover:text-primary">Gardening</h3><p className="text-sm opacity-80">Cultivate your green thumb.</p></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+            <div className="bg-surface rounded-2xl p-5 border border-border flex items-center gap-4 group card-hover">
+              <div className="w-12 h-12 rounded-xl bg-accent text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined text-2xl">local_florist</span></div>
+              <div><h3 className="font-bold font-headline leading-tight">Gardening</h3><p className="text-sm text-text/60">Cultivate your green thumb.</p></div>
+              <span className="ml-auto material-symbols-outlined text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
             </div>
-            <div className="bg-secondary rounded-2xl p-6 flex items-center gap-6 group hover:shadow-xl transition-all">
-              <div className="bg-accent text-primary p-4 rounded-xl flex-shrink-0"><span className="material-symbols-outlined text-3xl">directions_bike</span></div>
-              <div><h3 className="text-xl font-bold font-headline mb-1 group-hover:text-primary">Cycling</h3><p className="text-sm opacity-80">Hit the trails or the tarmac together.</p></div>
+            <div className="bg-surface rounded-2xl p-5 border border-border flex items-center gap-4 group card-hover">
+              <div className="w-12 h-12 rounded-xl bg-accent text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined text-2xl">directions_bike</span></div>
+              <div><h3 className="font-bold font-headline leading-tight">Cycling</h3><p className="text-sm text-text/60">Hit the trails or the tarmac together.</p></div>
+              <span className="ml-auto material-symbols-outlined text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
             </div>
           </div>
-          <div className="mt-12 text-center">
-            <button className="border-2 border-primary text-primary font-bold py-3 px-8 rounded-lg hover:bg-primary hover:text-background transition-all inline-flex items-center gap-2">
-              View All Categories <span className="material-symbols-outlined">grid_view</span>
+          <div className="mt-8 text-center">
+            <button className="inline-flex items-center gap-2 border border-border bg-white text-text font-semibold py-2.5 px-6 rounded-full hover:border-primary hover:text-primary transition-all text-sm">
+              View all categories <span className="material-symbols-outlined text-lg">grid_view</span>
             </button>
           </div>
         </section>
 
         {/* Testimonial */}
-        <section className="py-32 bg-secondary relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#4F5148 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-          <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <section className="py-16 md:py-20 bg-surface border-y border-border relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(#4F5148 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+          <div className="max-w-3xl mx-auto px-4 md:px-6 relative z-10">
             <div className="flex flex-col items-center text-center">
-              <span className="material-symbols-outlined text-5xl text-primary opacity-50 mb-8" style={{ fontVariationSettings: "'FILL' 1" }}>format_quote</span>
-              <h4 className="text-2xl md:text-4xl font-headline font-bold leading-tight mb-12">
-                &quot;I used to practice guitar alone in my room. Through Hobby Hub, I found a local jam group that not only improved my skills immensely but gave me a new family of friends.&quot;
-              </h4>
-              <div className="flex items-center gap-4">
-                <img className="w-16 h-16 rounded-full object-cover border-4 border-background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuxwpa8fazImP_dqNOKvkohFPA9zj5EfXj-cH5uDUm5gY4O9WKcKkPtjD8BPF7hGwOQNECNE5-kpg-ZgIO_Yzkw5QUT4FLdxyLI24fDYR2z2x75bsw3RJQQtHAdjvjULv3zurhzlv3xFSeuBroRmVb-WWIwygIHkoDYzqMfRBp9kqoqrYh_5B4Lk2Ytuu3Sui_5rwHXJq_LK6y388xDV2ygftypdq9-ZOSb5hUOx6HmLF97cdyTB2MSTnLu__YNj4bV4idTLD-NPf1" alt="" />
-                <div className="text-left"><p className="font-bold text-lg">Marcus Chen</p><p className="text-primary text-sm opacity-80">Acoustic Guitar Enthusiast</p></div>
+              <div className="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>format_quote</span>
+              </div>
+              <blockquote className="text-xl md:text-2xl font-headline font-medium leading-snug text-text mb-8 text-balance">
+                &ldquo;I used to practice guitar alone in my room. Through HobbyHive, I found a local jam group that not only improved my skills but gave me a new family of friends.&rdquo;
+              </blockquote>
+              <div className="flex items-center gap-3">
+                <img className="w-12 h-12 rounded-full object-cover ring-1 ring-black/5" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80" alt="Marcus Chen" />
+                <div className="text-left"><p className="font-semibold text-text text-sm leading-tight">Marcus Chen</p><p className="text-xs text-text/60">Acoustic Guitar · San Francisco</p></div>
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="bg-background pt-16 pb-8 border-t border-secondary">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
-            <a className="text-2xl font-bold text-primary flex items-center gap-2" href="#"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>widgets</span> Hobby Hub</a>
-            <div className="flex flex-wrap justify-center gap-8">
-              <a className="opacity-70 hover:opacity-100 hover:text-primary" href="#">About Us</a>
-              <a className="opacity-70 hover:opacity-100 hover:text-primary" href="#">Guidelines</a>
-              <a className="opacity-70 hover:opacity-100 hover:text-primary" href="#">Privacy</a>
-              <a className="opacity-70 hover:opacity-100 hover:text-primary" href="#">Terms</a>
+      <footer className="bg-background pt-12 pb-8 border-t border-border">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+            <a className="font-headline font-bold text-primary text-xl flex items-center gap-2" href="#"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>widgets</span> HobbyHive</a>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-text/60">
+              <a className="hover:text-text transition-colors" href="#">About</a>
+              <a className="hover:text-text transition-colors" href="#">Guidelines</a>
+              <a className="hover:text-text transition-colors" href="#">Privacy</a>
+              <a className="hover:text-text transition-colors" href="#">Terms</a>
             </div>
-            <div className="flex gap-4">
-              <a className="text-primary bg-secondary p-2 rounded-full hover:bg-accent w-10 h-10 flex items-center justify-center" href="#"><span className="material-symbols-outlined text-sm">language</span></a>
-              <a className="text-primary bg-secondary p-2 rounded-full hover:bg-accent w-10 h-10 flex items-center justify-center" href="#"><span className="material-symbols-outlined text-sm">mail</span></a>
+            <div className="flex gap-2">
+              <a className="w-9 h-9 rounded-full bg-white border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary/20 transition" href="#" aria-label="Website"><span className="material-symbols-outlined text-lg">language</span></a>
+              <a className="w-9 h-9 rounded-full bg-white border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary/20 transition" href="#" aria-label="Email"><span className="material-symbols-outlined text-lg">mail</span></a>
             </div>
           </div>
-          <div className="text-center border-t border-secondary pt-8">
-            <p className="text-sm opacity-50">© 2024 Hobby Hub. All rights reserved. Connect &amp; Create.</p>
+          <div className="text-center border-t border-border pt-6">
+            <p className="text-xs text-text/40">© 2024 HobbyHive. All rights reserved. Connect &amp; Create.</p>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

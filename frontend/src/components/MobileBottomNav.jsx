@@ -22,7 +22,7 @@ export default function MobileBottomNav() {
     <>
       <nav
         aria-label="Mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-accent flex justify-around items-center py-2 px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-t border-border flex justify-around items-center py-2 px-2 safe-area-pb shadow-[0_-8px_24px_rgba(39,40,34,0.06)]"
       >
         {navItems.map((item) => {
           const active = isActive(item.to);
@@ -30,18 +30,19 @@ export default function MobileBottomNav() {
             <Link
               key={item.label}
               to={item.to}
-              className={`flex flex-col items-center gap-1 px-4 py-1 rounded-full transition-colors ${
-                active ? "bg-secondary text-primary font-bold" : "text-text/60 hover:text-primary"
+              aria-current={active ? "page" : undefined}
+              className={`flex flex-col items-center gap-1 px-5 py-1.5 rounded-2xl transition-all ${
+                active ? "bg-primary text-background shadow-sm" : "text-text/60 hover:text-text hover:bg-secondary"
               }`}
             >
-              <span className="material-symbols-outlined text-xl">{item.icon}</span>
-              <span className="text-xs">{item.label}</span>
+              <span className="material-symbols-outlined text-xl leading-none">{item.icon}</span>
+              <span className="text-[11px] font-medium leading-none">{item.label}</span>
             </Link>
           );
         })}
       </nav>
       {/* Spacer so fixed bottom nav does not overlay content */}
-      <div className="h-16 md:hidden" />
+      <div className="h-[72px] md:hidden" />
     </>
   );
 }

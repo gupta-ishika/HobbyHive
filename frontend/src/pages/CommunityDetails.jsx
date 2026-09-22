@@ -48,59 +48,61 @@ export default function CommunityDetails() {
     <div className="min-h-screen bg-background">
       <AppHeader variant="app" />
 
-      {/* Mobile top bar - back + title */}
-      <div className="md:hidden flex justify-between items-center px-4 py-3 bg-background border-b border-accent sticky top-0 z-40">
-        <button onClick={() => navigate(-1)} className="p-1 text-text/60">
+      {/* Mobile top bar */}
+      <div className="md:hidden flex justify-between items-center px-4 py-3 bg-surface border-b border-border sticky top-0 z-40">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full hover:bg-secondary flex items-center justify-center text-text/60 transition" aria-label="Go back">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <span className="font-headline font-bold text-sm text-text truncate max-w-[200px]">{community.name}</span>
-        <button className="p-1 text-text/60">
+        <button className="w-9 h-9 rounded-full hover:bg-secondary flex items-center justify-center text-text/60 transition" aria-label="More options">
           <span className="material-symbols-outlined">more_vert</span>
         </button>
       </div>
 
       {/* Community Header */}
       <main className="max-w-5xl mx-auto md:px-6 px-4 py-6 flex flex-col gap-6">
-        <div className="bg-background rounded-2xl border-2 border-accent p-4 md:p-6 shadow-sm">
-          <div className="w-full h-48 md:h-64 rounded-xl overflow-hidden relative bg-secondary">
-            <img src={community.image} alt={community.name} className="w-full h-full object-cover" />
+        <div className="bg-surface rounded-2xl border border-border p-4 md:p-6 shadow-sm">
+          <div className="w-full h-48 md:h-64 rounded-2xl overflow-hidden relative bg-secondary">
+            <img src={community.image} alt={community.name} className="w-full h-full object-cover" loading="eager" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-4">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-5">
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="accent" icon={community.icon}>
                   {community.hobby}
                 </Badge>
-                <span className="text-xs text-text/60 flex items-center gap-1">
-                  <span className="material-symbols-outlined text-sm">group</span> {community.members} Members
+                <span className="text-xs font-medium text-text/50 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm">group</span> {community.members} members
                 </span>
               </div>
-              <h1 className="font-headline font-black text-2xl md:text-3xl text-text">{community.name}</h1>
-              <p className="text-sm text-text/70 max-w-2xl leading-relaxed">{community.description}</p>
+              <h1 className="font-headline font-black text-2xl md:text-3xl text-text tracking-tight">{community.name}</h1>
+              <p className="text-sm text-text/60 max-w-2xl leading-relaxed">{community.description}</p>
             </div>
 
             <Button
               variant={joined ? "secondary" : "primary"}
               size="md"
-              className="w-full md:w-auto rounded-lg"
+              className="w-full md:w-auto"
               onClick={() => setJoined(!joined)}
             >
               <span className="material-symbols-outlined text-lg">{joined ? "check" : "add"}</span>
-              {joined ? "Joined" : "Join Community"}
+              {joined ? "Joined" : "Join community"}
             </Button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-accent gap-6 overflow-x-auto">
+        <div className="flex border-b border-border gap-6 overflow-x-auto scrollbar-none">
           {["Posts", "Members", "Events", "Resources"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 px-1 whitespace-nowrap font-bold text-sm border-b-2 transition ${
-                activeTab === tab ? "border-primary text-primary" : "border-transparent text-text/60 hover:text-primary"
-              }`}
+              aria-selected={activeTab === tab}
+              role="tab"
+              className={`pb-3 px-1 whitespace-nowrap font-semibold text-sm border-b-2 transition relative -mb-px ${activeTab === tab ? "border-primary text-primary" : "border-transparent text-text/60 hover:text-text hover:border-border"
+                }`}
             >
               {tab}
             </button>
@@ -132,8 +134,8 @@ export default function CommunityDetails() {
             ))}
 
             {activeTab !== "Posts" && (
-              <div className="bg-background rounded-xl border-2 border-dashed border-accent p-12 text-center">
-                <p className="font-bold text-text">{activeTab} tab</p>
+              <div className="bg-surface rounded-2xl border border-dashed border-border p-12 text-center">
+                <p className="font-semibold text-text">{activeTab} coming soon</p>
                 <p className="text-sm text-text/60 mt-1">Content for {activeTab} will appear here.</p>
               </div>
             )}
@@ -141,28 +143,28 @@ export default function CommunityDetails() {
 
           {/* Sidebar - Upcoming Events + Rules */}
           <div className="hidden md:flex flex-col gap-4">
-            <div className="bg-background p-5 rounded-2xl border-2 border-accent">
-              <h3 className="font-headline font-bold text-text mb-4">Upcoming Events</h3>
+            <div className="bg-surface p-5 rounded-2xl border border-border shadow-sm">
+              <h3 className="font-headline font-bold text-text text-sm mb-4">Upcoming events</h3>
               <div className="flex gap-3 items-start">
-                <div className="bg-secondary rounded-lg p-2 flex flex-col items-center justify-center min-w-[50px] border border-accent">
-                  <span className="text-xs font-bold text-text/60 uppercase">OCT</span>
+                <div className="w-12 h-14 rounded-xl bg-accent/60 border border-border flex flex-col items-center justify-center shrink-0">
+                  <span className="text-[11px] font-semibold text-text/60 uppercase tracking-wide">Oct</span>
                   <span className="font-headline font-bold text-lg leading-none text-text">12</span>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm text-text">Beginner Wheel Throwing</h4>
-                  <p className="text-xs text-text/60">Community Studio · 6:00 PM</p>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-sm text-text leading-tight">Beginner Wheel Throwing</h4>
+                  <p className="text-xs text-text/50 mt-1">Community Studio • 6:00 PM</p>
                 </div>
               </div>
-              <Link to="/events" className="block text-center mt-4 text-sm font-bold text-primary hover:underline">
+              <Link to="/events" className="block text-center mt-4 text-xs font-semibold text-primary hover:underline">
                 View all events →
               </Link>
             </div>
 
-            <div className="bg-secondary/30 p-4 rounded-xl border border-accent">
-              <h4 className="font-bold text-sm text-text flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-lg">info</span> Community Guidelines
+            <div className="bg-secondary/30 p-4 rounded-2xl border border-border">
+              <h4 className="font-semibold text-sm text-text flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg">info</span> Community guidelines
               </h4>
-              <ul className="text-xs text-text/60 mt-2 space-y-1 list-disc list-inside">
+              <ul className="text-xs text-text/60 mt-2.5 space-y-1.5 list-disc list-inside leading-relaxed">
                 <li>Be kind and supportive</li>
                 <li>Share only relevant content</li>
                 <li>No spam or self-promotion</li>

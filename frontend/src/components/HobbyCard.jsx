@@ -3,8 +3,8 @@ export default function HobbyCard({ hobby, selected, onToggle }) {
     <button
       aria-pressed={selected}
       onClick={() => onToggle(hobby.id)}
-      className={`hobby-card group relative text-left rounded-lg overflow-hidden border-2 shadow-sm hover:shadow-md hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background h-48 md:h-56 flex flex-col justify-end ${
-        selected ? "selected border-primary bg-primary" : "border-accent bg-background"
+      className={`hobby-card group relative text-left rounded-2xl overflow-hidden border shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 h-48 md:h-52 flex flex-col justify-end transition-all duration-200 ${
+        selected ? "selected border-primary bg-primary" : "border-border bg-white hover:border-border-strong"
       }`}
     >
       {/* Background photo with error fallback */}

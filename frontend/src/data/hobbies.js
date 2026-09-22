@@ -64,3 +64,4 @@ export const hobbies = [
     alt: "code editor",
   },
 ];
+
