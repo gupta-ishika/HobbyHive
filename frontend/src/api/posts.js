@@ -1,8 +1,8 @@
 import { api } from "./client";
 
 // GET /posts?community_id&author_id&search&limit&offset
-export function listPosts(params) {
-  return api.get("/posts", { params });
+export function listPosts(params, opts) {
+  return api.get("/posts", { params, ...opts });
 }
 
 // POST /posts (201) | 404 unknown community

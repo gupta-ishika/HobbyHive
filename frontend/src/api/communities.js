@@ -1,8 +1,8 @@
 import { api } from "./client";
 
 // GET /communities?category&hobby_id&search&limit&offset
-export function listCommunities(params) {
-  return api.get("/communities", { params });
+export function listCommunities(params, opts) {
+  return api.get("/communities", { params, ...opts });
 }
 
 // POST /communities (201) | 409 duplicate name
@@ -11,8 +11,8 @@ export function createCommunity(payload) {
 }
 
 // GET /communities/{id} — detail with members
-export function fetchCommunity(id) {
-  return api.get(`/communities/${id}`);
+export function fetchCommunity(id, opts) {
+  return api.get(`/communities/${id}`, opts);
 }
 
 // PUT /communities/{id} — owner only (403)

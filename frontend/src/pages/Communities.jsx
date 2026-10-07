@@ -8,6 +8,7 @@ import MobileBottomNav from "../components/MobileBottomNav";
 import EmptyState from "../components/EmptyState";
 import { CardSkeleton } from "../components/Skeleton";
 import { useToast } from "../components/Toast";
+import { useAbortable } from "../hooks/useAbortable";
 import { listCommunities, createCommunity, joinCommunity, leaveCommunity } from "../api/communities";
 
 const PAGE_SIZE = 9;
@@ -89,6 +90,7 @@ function CreateCommunityModal({ onClose, onCreated }) {
 export default function Communities() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const runAbortable = useAbortable();
   const [communities, setCommunities] = useState([]);
   const [active, setActive] = useState("All");
   const [query, setQuery] = useState("");
@@ -109,28 +111,33 @@ export default function Communities() {
   }, [query]);
 
   const load = useCallback(async ({ append = false, offset = 0 } = {}) => {
-    if (append) setLoadingMore(true);
-    else {
-      setLoading(true);
-      setLoadError("");
-    }
-    try {
-      const data = await listCommunities({
-        category: active === "All" ? undefined : active,
-        search: debouncedQuery || undefined,
-        limit: PAGE_SIZE,
-        offset,
-      });
-      setHasMore(data.length === PAGE_SIZE);
-      setCommunities((prev) => (append ? [...prev, ...data] : data));
-    } catch (err) {
-      if (!append) setLoadError(err?.detail || "Could not load communities.");
-      else toast(err?.detail || "Could not load more.", "error");
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [active, debouncedQuery, toast]);
+    return runAbortable(async (signal) => {
+      if (append) setLoadingMore(true);
+      else {
+        setLoading(true);
+        setLoadError("");
+      }
+      try {
+        const data = await listCommunities({
+          category: active === "All" ? undefined : active,
+          search: debouncedQuery || undefined,
+          limit: PAGE_SIZE,
+          offset,
+        }, { signal });
+        setHasMore(data.length === PAGE_SIZE);
+        setCommunities((prev) => (append ? [...prev, ...data] : data));
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        if (!append) setLoadError(err?.detail || "Could not load communities.");
+        else toast(err?.detail || "Could not load more.", "error");
+      } finally {
+        if (!signal.aborted) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
+      }
+    });
+  }, [active, debouncedQuery, toast, runAbortable]);
 
   useEffect(() => {
     load();

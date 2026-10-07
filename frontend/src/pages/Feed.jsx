@@ -12,6 +12,7 @@ import { PostSkeleton } from "../components/Skeleton";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../components/Toast";
 import { usePostActions } from "../hooks/usePostActions";
+import { useAbortable } from "../hooks/useAbortable";
 import { listPosts, createPost } from "../api/posts";
 import { listCommunities, joinCommunity } from "../api/communities";
 import { listEvents } from "../api/events";
@@ -27,6 +28,7 @@ const QUICK_ACCESS_FALLBACK = [
 export default function Feed() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const runAbortable = useAbortable();
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [events, setEvents] = useState([]);
@@ -47,24 +49,33 @@ export default function Feed() {
   } = usePostActions(posts, setPosts);
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError("");
-    try {
-      const [postsData, communitiesData] = await Promise.all([
-        listPosts({ limit: 50 }),
-        listCommunities({ limit: 50 }),
-      ]);
-      setPosts(postsData);
-      setCommunities(communitiesData);
-      const joined = communitiesData.find((c) => c.is_member) || communitiesData[0];
-      setComposerCommunityId((prev) => prev || joined?.id || null);
-      listEvents({ upcoming_only: true, limit: 3 }).then(setEvents).catch(() => {});
-    } catch (err) {
-      setLoadError(err?.detail || "Could not load your feed.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    return runAbortable(async (signal) => {
+      setLoading(true);
+      setLoadError("");
+      try {
+        // Sidebar events are non-blocking: failure yields an empty rail.
+        const eventsPromise = listEvents({ upcoming_only: true, limit: 3 }, { signal }).catch((err) => {
+          if (err?.name === "AbortError") throw err;
+          return [];
+        });
+        const [postsData, communitiesData, eventsData] = await Promise.all([
+          listPosts({ limit: 50 }, { signal }),
+          listCommunities({ limit: 50 }, { signal }),
+          eventsPromise,
+        ]);
+        setPosts(postsData);
+        setCommunities(communitiesData);
+        setEvents(eventsData);
+        const joined = communitiesData.find((c) => c.is_member) || communitiesData[0];
+        setComposerCommunityId((prev) => prev || joined?.id || null);
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        setLoadError(err?.detail || "Could not load your feed.");
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    });
+  }, [runAbortable]);
 
   useEffect(() => {
     load();

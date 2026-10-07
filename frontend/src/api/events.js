@@ -1,8 +1,8 @@
 import { api } from "./client";
 
 // GET /events?community_id&upcoming_only&search&limit&offset
-export function listEvents(params) {
-  return api.get("/events", { params });
+export function listEvents(params, opts) {
+  return api.get("/events", { params, ...opts });
 }
 
 // POST /events (201) | 404 unknown community | 400 past date

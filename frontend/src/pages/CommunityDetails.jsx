@@ -12,6 +12,7 @@ import { PostSkeleton, Skeleton } from "../components/Skeleton";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../components/Toast";
 import { usePostActions } from "../hooks/usePostActions";
+import { useAbortable } from "../hooks/useAbortable";
 import { fetchCommunity, joinCommunity, leaveCommunity } from "../api/communities";
 import { listPosts, createPost } from "../api/posts";
 import { listEvents } from "../api/events";
@@ -22,6 +23,7 @@ export default function CommunityDetails() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const runAbortable = useAbortable();
   const [community, setCommunity] = useState(null);
   const [posts, setPosts] = useState([]);
   const [events, setEvents] = useState([]);
@@ -44,25 +46,34 @@ export default function CommunityDetails() {
   } = usePostActions(posts, setPosts);
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setNotFound(false);
-    setLoadError("");
-    try {
-      const detail = await fetchCommunity(id);
-      setCommunity(detail);
-      const [postsData, eventsData] = await Promise.all([
-        listPosts({ community_id: id, limit: 50 }).catch(() => []),
-        listEvents({ community_id: id, upcoming_only: true, limit: 10 }).catch(() => []),
-      ]);
-      setPosts(postsData);
-      setEvents(eventsData);
-    } catch (err) {
-      if (err?.status === 404) setNotFound(true);
-      else setLoadError(err?.detail || "Could not load this community.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
+    return runAbortable(async (signal) => {
+      setLoading(true);
+      setNotFound(false);
+      setLoadError("");
+      try {
+        const detail = await fetchCommunity(id, { signal });
+        setCommunity(detail);
+        const [postsData, eventsData] = await Promise.all([
+          listPosts({ community_id: id, limit: 50 }, { signal }).catch((err) => {
+            if (err?.name === "AbortError") throw err;
+            return [];
+          }),
+          listEvents({ community_id: id, upcoming_only: true, limit: 10 }, { signal }).catch((err) => {
+            if (err?.name === "AbortError") throw err;
+            return [];
+          }),
+        ]);
+        setPosts(postsData);
+        setEvents(eventsData);
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        if (err?.status === 404) setNotFound(true);
+        else setLoadError(err?.detail || "Could not load this community.");
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    });
+  }, [id, runAbortable]);
 
   useEffect(() => {
     load();

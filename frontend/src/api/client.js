@@ -39,7 +39,7 @@ function buildUrl(path, params) {
   return url;
 }
 
-async function request(path, { method = "GET", body, auth = true, params } = {}) {
+async function request(path, { method = "GET", body, auth = true, params, signal } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (auth) {
     const token = getToken();
@@ -52,8 +52,14 @@ async function request(path, { method = "GET", body, auth = true, params } = {})
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal,
     });
-  } catch {
+  } catch (err) {
+    // === ABORT PASSTHROUGH (Fix 10 abort-contract) ===
+    // Cancellation is not a failure: rethrow AbortError unwrapped so callers
+    // can distinguish it from ApiError. It must NOT clear auth or fire the
+    // 401 logout path (an aborted request produces no response at all).
+    if (err?.name === "AbortError") throw err;
     throw new ApiError(0, "Could not reach the server. Is the backend running?");
   }
 

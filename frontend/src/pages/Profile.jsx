@@ -12,6 +12,7 @@ import PostCard, { avatarFor } from "../components/PostCard";
 import { PostSkeleton, Skeleton } from "../components/Skeleton";
 import { useAuth } from "../contexts/AuthContext";
 import { usePostActions } from "../hooks/usePostActions";
+import { useAbortable } from "../hooks/useAbortable";
 import { fetchMyProfile, fetchProfileById, updateMyProfile } from "../api/users";
 import { listPosts } from "../api/posts";
 import { timeAgo } from "../utils/time";
@@ -99,6 +100,7 @@ export default function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user: me, logout, refreshUser } = useAuth();
+  const runAbortable = useAbortable();
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,22 +122,28 @@ export default function Profile() {
   } = usePostActions(posts, setPosts);
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setNotFound(false);
-    setLoadError("");
-    try {
-      const data = id && (!me || String(me.id) !== String(id))
-        ? await fetchProfileById(id)
-        : await fetchMyProfile();
-      setProfile(data);
-      setPosts(await listPosts({ author_id: data.id, limit: 30 }).catch(() => []));
-    } catch (err) {
-      if (err?.status === 404) setNotFound(true);
-      else setLoadError(err?.detail || "Could not load this profile.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, me]);
+    return runAbortable(async (signal) => {
+      setLoading(true);
+      setNotFound(false);
+      setLoadError("");
+      try {
+        const data = id && (!me || String(me.id) !== String(id))
+          ? await fetchProfileById(id, { signal })
+          : await fetchMyProfile({ signal });
+        setProfile(data);
+        setPosts(await listPosts({ author_id: data.id, limit: 30 }, { signal }).catch((err) => {
+          if (err?.name === "AbortError") throw err;
+          return [];
+        }));
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        if (err?.status === 404) setNotFound(true);
+        else setLoadError(err?.detail || "Could not load this profile.");
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    });
+  }, [id, me, runAbortable]);
 
   useEffect(() => {
     load();

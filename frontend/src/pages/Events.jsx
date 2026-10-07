@@ -7,6 +7,7 @@ import MobileBottomNav from "../components/MobileBottomNav";
 import EmptyState from "../components/EmptyState";
 import { CardSkeleton } from "../components/Skeleton";
 import { useToast } from "../components/Toast";
+import { useAbortable } from "../hooks/useAbortable";
 import { listEvents, fetchEvent, rsvpToEvent, cancelRsvp } from "../api/events";
 import { listCommunities } from "../api/communities";
 import { eventDateLabel, eventTimeLabel } from "../utils/time";
@@ -47,6 +48,7 @@ function EventRsvpControls({ event, busy, onRsvp, onCancel }) {
 
 export default function Events() {
   const { toast } = useToast();
+  const runAbortable = useAbortable();
   const [events, setEvents] = useState([]);
   const [communityNames, setCommunityNames] = useState({});
   const [filter, setFilter] = useState("Upcoming");
@@ -55,23 +57,29 @@ export default function Events() {
   const [busyIds, setBusyIds] = useState({});
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError("");
-    try {
-      const [eventsData, communitiesData] = await Promise.all([
-        listEvents({ upcoming_only: true, limit: 50 }),
-        listCommunities({ limit: 100 }).catch(() => []),
-      ]);
-      setEvents(eventsData);
-      const names = {};
-      for (const c of communitiesData) names[c.id] = c.name;
-      setCommunityNames(names);
-    } catch (err) {
-      setLoadError(err?.detail || "Could not load events.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    return runAbortable(async (signal) => {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const [eventsData, communitiesData] = await Promise.all([
+          listEvents({ upcoming_only: true, limit: 50 }, { signal }),
+          listCommunities({ limit: 100 }, { signal }).catch((err) => {
+            if (err?.name === "AbortError") throw err;
+            return [];
+          }),
+        ]);
+        setEvents(eventsData);
+        const names = {};
+        for (const c of communitiesData) names[c.id] = c.name;
+        setCommunityNames(names);
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        setLoadError(err?.detail || "Could not load events.");
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    });
+  }, [runAbortable]);
 
   useEffect(() => {
     load();

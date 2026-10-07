@@ -6,12 +6,14 @@ import EmptyState from "../components/EmptyState";
 import Button from "../components/Button";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../components/Toast";
+import { useAbortable } from "../hooks/useAbortable";
 import { listHobbies, saveMyHobbies } from "../api/users";
 
 export default function HobbySelectionMinimal() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
+  const runAbortable = useAbortable();
   const [hobbies, setHobbies] = useState([]);
   const [selected, setSelected] = useState(() => (user?.hobbies || []).map((h) => h.id));
   const [loading, setLoading] = useState(true);
@@ -19,24 +21,20 @@ export default function HobbySelectionMinimal() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    async function load() {
+    runAbortable(async (signal) => {
       setLoading(true);
       setLoadError("");
       try {
-        const data = await listHobbies();
-        if (!cancelled) setHobbies(data);
+        const data = await listHobbies({ signal });
+        setHobbies(data);
       } catch (err) {
-        if (!cancelled) setLoadError(err?.detail || "Could not load hobbies.");
+        if (err?.name === "AbortError") return;
+        setLoadError(err?.detail || "Could not load hobbies.");
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    });
+  }, [runAbortable]);
 
   const toggle = (id) => {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
