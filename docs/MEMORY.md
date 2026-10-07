@@ -1,24 +1,19 @@
 # Project Memory & Active State — HobbyHive
 
 ## Current Project Status
-- **Current Phase:** Phase 2 (Authentication & User Profile Backend)
-- **Active Task:** Ready to begin `TASK-006`
+- **Current Phase:** Phase 3 (Communities, Posts & Events Backend)
+- **Active Task:** Ready to begin `TASK-009`
 - **Frontend Status:** React 19 + Vite + Tailwind v4 UI views completed with mock static data.
-- **Backend Status:** Phase 1 complete and updated with model specifications. Database engine, Alembic migrations (`2926323a790d_initial_schema_v2.py`), SQLAlchemy models, Pydantic v2 schemas, and FastAPI entry point initialized and verified.
+- **Backend Status:** Phase 1 & Phase 2 complete and verified with automated test suite (7/7 passed). Auth and onboarding endpoints fully functional.
 
 ---
 
-## Architectural & Model 
- Established
-- **User Model:** `username` (indexed, unique, 3-20 chars regex validated), `bio` (String 200), `DateTime(timezone=True)`, `passive_deletes=True` on posts and comments for DB-level `SET NULL`.
-- **Hobby Model:** `name`, `normalized_name` (indexed, unique), nullable `icon`, and `image_url`.
-- **Community Model:** `name` (String 50), `normalized_name` (indexed, unique), `description` (String 1000), `creator_id` with `ondelete="RESTRICT"`, `CheckConstraint("length(name) >= 3")`, and timezone-aware timestamps.
-- **Post & Comment Models:** Nullable `author_id` with `ondelete="SET NULL"` (frontend displays "Deleted User"), `Post.content` (String 2000), `Comment.content` (String 500), `parent_comment_id` for nested comment replies.
-- **PostImage Model:** Supports up to 5 images per post with `CheckConstraint("position BETWEEN 0 AND 4")` and `UniqueConstraint("post_id", "position")`.
-- **Event Model:** `starts_at` (DateTime with timezone) replacing separate date/time columns.
-- **Password Hashing:** Direct `bcrypt` library (work factor: 12).
-- **JWT Auth:** `PyJWT` library (algorithm: `HS256`, 7-day single access token, no refresh tokens for MVP).
-- **Database:** SQLite (dev) / PostgreSQL (prod) managed via Alembic migrations.
+## Architectural & Model Guarantees Established
+- **Password Hashing:** Direct `bcrypt` library (`bcrypt.hashpw` / `bcrypt.checkpw`, work factor: 12).
+- **JWT Auth:** `PyJWT` library (`algorithm="HS256"`, 7-day single access token, no refresh tokens for MVP).
+- **Auth & Route Protection:** `get_current_user` dependency in `app/api/deps.py` returns 401 on expired/malformed/missing Bearer tokens.
+- **Validation:** Username regex validation (`re.fullmatch(r"^[a-zA-Z0-9_]{3,20}$", username)`), email uniqueness check (409 Conflict), and username uniqueness check (409 Conflict).
+- **Database:** SQLite (dev) / PostgreSQL (prod) version-controlled via Alembic migrations.
 
 ---
 
@@ -28,10 +23,15 @@
   - `TASK-001`: Setup `backend/` structure, `requirements.txt`, and virtual environment.
   - `TASK-002`: Configured `app/core/config.py` and `app/core/database.py`.
   - `TASK-003`: Created updated SQLAlchemy models with cascading foreign keys and constraints.
-  - `TASK-004`: Initialized Alembic, generated updated migration (`2926323a790d_initial_schema_v2.py`), and applied to database.
+  - `TASK-004`: Initialized Alembic, generated migration (`2926323a790d_initial_schema_v2.py`), and applied to database.
   - `TASK-005`: Created Pydantic v2 DTO schemas with regex validation for usernames and length bounds.
+- [x] **Phase 2 Complete:**
+  - `TASK-006`: Implemented `bcrypt` password hashing (work factor 12), `PyJWT` 7-day access token generation/decoding, and `get_current_user` dependency in `app/api/deps.py`.
+  - `TASK-007`: Implemented `/api/v1/auth/signup` (201, 409 duplicate checks), `/api/v1/auth/login` (200, 401 checks), and `/api/v1/auth/me` (200).
+  - `TASK-008`: Implemented `/api/v1/users/profile` (GET/PUT), `/api/v1/users/hobbies` (GET/POST), and default hobby seeder.
+  - Automated test suite created in `tests/test_auth_and_users.py` (7/7 tests passing).
 
 ---
 
 ## Immediate Next Step
-- Execute `TASK-006`: Implement password hashing (`bcrypt`), JWT generation (`PyJWT`, 7-day single access token), and `get_current_user` auth dependency in `app/api/deps.py`.
+- Execute `TASK-009`: Implement Communities Service & API (`GET/POST /api/v1/communities`, `GET/PUT/DELETE /api/v1/communities/{id}` with owner-only checks, `POST /api/v1/communities/{id}/join`, `POST /api/v1/communities/{id}/leave`).

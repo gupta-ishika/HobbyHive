@@ -8,9 +8,9 @@
 - [x] **TASK-005:** Create Pydantic v2 Schemas for request/response DTOs.
 
 ## Phase 2: Authentication & User Profile
-- [ ] **TASK-006:** Implement password hashing (`bcrypt`, work factor: 12), JWT generation (`PyJWT`, 7-day single access token), and `get_current_user` dependency (`deps.py`).
-- [ ] **TASK-007:** Implement Auth API endpoints (`POST /api/v1/auth/signup` with 409 duplicate check, `POST /api/v1/auth/login` with 401 check, `GET /api/v1/auth/me`).
-- [ ] **TASK-008:** Implement User & Onboarding API endpoints (`GET/PUT /api/v1/users/profile`, `POST /api/v1/users/hobbies`).
+- [x] **TASK-006:** Implement password hashing (`bcrypt`, work factor: 12), JWT generation (`PyJWT`, 7-day single access token), and `get_current_user` dependency (`deps.py`).
+- [x] **TASK-007:** Implement Auth API endpoints (`POST /api/v1/auth/signup` with 409 duplicate check, `POST /api/v1/auth/login` with 401 check, `GET /api/v1/auth/me`).
+- [x] **TASK-008:** Implement User & Onboarding API endpoints (`GET/PUT /api/v1/users/profile`, `POST /api/v1/users/hobbies`, `GET /api/v1/users/hobbies`).
 
 ## Phase 3: Communities, Posts & Events Backend
 - [ ] **TASK-009:** Implement Communities Service & API (`GET/POST /api/v1/communities`, `GET/PUT/DELETE /api/v1/communities/{id}` with owner-only checks, `POST /api/v1/communities/{id}/join`, `POST /api/v1/communities/{id}/leave`).
