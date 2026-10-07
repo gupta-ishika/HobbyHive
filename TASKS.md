@@ -13,9 +13,9 @@
 - [x] **TASK-008:** Implement User & Onboarding API endpoints (`GET/PUT /api/v1/users/profile`, `POST /api/v1/users/hobbies`, `GET /api/v1/users/hobbies`).
 
 ## Phase 3: Communities, Posts & Events Backend
-- [ ] **TASK-009:** Implement Communities Service & API (`GET/POST /api/v1/communities`, `GET/PUT/DELETE /api/v1/communities/{id}` with owner-only checks, `POST /api/v1/communities/{id}/join`, `POST /api/v1/communities/{id}/leave`).
-- [ ] **TASK-010:** Implement Posts & Feed Service & API (`GET/POST /api/v1/posts`, `DELETE /api/v1/posts/{id}` with author-only checks, `POST /api/v1/posts/{id}/like` toggle endpoint, `POST/DELETE /api/v1/posts/{id}/comments`).
-- [ ] **TASK-011:** Implement Events Service & API (`GET/POST /api/v1/events`, `DELETE /api/v1/events/{id}` with creator-only checks, `POST /api/v1/events/{id}/rsvp`, `DELETE /api/v1/events/{id}/rsvp`).
+- [x] **TASK-009:** Implement Communities Service & API (`GET/POST /api/v1/communities`, `GET/PUT/DELETE /api/v1/communities/{id}` with owner-only checks, `POST /api/v1/communities/{id}/join`, `POST /api/v1/communities/{id}/leave`).
+- [x] **TASK-010:** Implement Posts & Feed Service & API (`GET/POST /api/v1/posts`, `DELETE /api/v1/posts/{id}` with author-only checks, `POST /api/v1/posts/{id}/like` toggle endpoint, `POST/DELETE /api/v1/posts/{id}/comments`).
+- [x] **TASK-011:** Implement Events Service & API (`GET/POST /api/v1/events`, `DELETE /api/v1/events/{id}` with creator-only checks, `POST /api/v1/events/{id}/rsvp`, `DELETE /api/v1/events/{id}/rsvp`).
 
 ## Phase 4: Frontend API Integration & Data Sync
 - [ ] **TASK-012:** Create Frontend API Client (`frontend/src/api/client.js`) and endpoint modules (`auth.js`, `communities.js`, `posts.js`, `events.js`, `users.js`).

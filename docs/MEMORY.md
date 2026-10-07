@@ -1,10 +1,10 @@
 # Project Memory & Active State — HobbyHive
 
 ## Current Project Status
-- **Current Phase:** Phase 3 (Communities, Posts & Events Backend)
-- **Active Task:** Ready to begin `TASK-009`
+- **Current Phase:** Phase 4 (Frontend API Integration & Data Sync)
+- **Active Task:** Ready to begin `TASK-012`
 - **Frontend Status:** React 19 + Vite + Tailwind v4 UI views completed with mock static data.
-- **Backend Status:** Phase 1 & Phase 2 complete and verified with automated test suite (7/7 passed). Auth and onboarding endpoints fully functional.
+- **Backend Status:** Phase 1, Phase 2 & Phase 3 complete and verified with automated test suite (11/11 passed). Auth, onboarding, communities, posts, and events endpoints fully functional.
 
 ---
 
@@ -34,4 +34,10 @@
 ---
 
 ## Immediate Next Step
-- Execute `TASK-009`: Implement Communities Service & API (`GET/POST /api/v1/communities`, `GET/PUT/DELETE /api/v1/communities/{id}` with owner-only checks, `POST /api/v1/communities/{id}/join`, `POST /api/v1/communities/{id}/leave`).
+- Execute `TASK-012`: Create Frontend API Client (`frontend/src/api/client.js`) and endpoint modules (`auth.js`, `communities.js`, `posts.js`, `events.js`, `users.js`).
+
+## Phase 3 Notes (completed 2026-10-07)
+- `TASK-009`: Added `app/api/v1/communities.py` (list/create/detail/update/delete/join/leave) wired into v1 router; reused existing `community_service.py` (owner-only 403, duplicate-name 409, idempotent join, owner-leave 400).
+- `TASK-010`: Added `app/services/post_service.py` + `app/api/v1/posts.py` (feed filters, author-only edit/delete, like toggle, nested comments with parent validation); added `PostUpdate` schema + `CommentResponse.model_rebuild()`.
+- `TASK-011`: Added `app/services/event_service.py` + `app/api/v1/events.py` (upcoming/search filters, creator-only edit/delete, RSVP upsert, cancel 404, past-date 400).
+- Verification: `tests/test_phase3_communities_posts_events.py` (4 tests) — full suite 11/11 passing, including ownership 403s, idempotent join, like toggle, RSVP update, and cascade deletes.

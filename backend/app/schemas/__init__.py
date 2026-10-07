@@ -20,6 +20,7 @@ from app.schemas.community import (
 from app.schemas.post import (
     PostBase,
     PostCreate,
+    PostUpdate,
     PostResponse,
     PostImageBase,
     PostImageCreate,
@@ -59,6 +60,7 @@ __all__ = [
     "CommunityMemberResponse",
     "PostBase",
     "PostCreate",
+    "PostUpdate",
     "PostResponse",
     "PostImageBase",
     "PostImageCreate",

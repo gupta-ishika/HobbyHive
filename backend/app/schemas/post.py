@@ -53,6 +53,11 @@ class PostCreate(PostBase):
     images: Optional[List[PostImageCreate]] = []
 
 
+class PostUpdate(BaseModel):
+    title: Optional[str] = Field(None, max_length=200)
+    content: Optional[str] = Field(None, max_length=2000)
+
+
 class PostResponse(PostBase):
     id: int
     author_id: Optional[int] = None
@@ -72,3 +77,6 @@ class LikeToggleResponse(BaseModel):
     post_id: int
     is_liked: bool
     likes_count: int
+
+
+CommentResponse.model_rebuild()
