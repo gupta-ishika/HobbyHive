@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./components/Toast";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute";
 import Landing from "./pages/Landing";
 import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
 import Feed from "./pages/Feed";
@@ -20,8 +21,12 @@ export default function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+
+          {/* Guest-only routes — bounce authenticated users to /feed */}
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
 
           {/* Protected routes — redirect to /login if unauthenticated */}
           <Route element={<ProtectedRoute />}>

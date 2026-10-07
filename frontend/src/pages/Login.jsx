@@ -1,5 +1,5 @@
 ﻿import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -7,6 +7,7 @@ import Card from "../components/Card";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +37,13 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      navigate("/feed");
+      // Return to the protected page that sent the user here, if any.
+      const from = location.state?.from;
+      const target =
+        typeof from === "string" && from.startsWith("/") && !from.startsWith("//")
+          ? from
+          : "/feed";
+      navigate(target, { replace: true });
     } catch (err) {
       if (err?.status === 401) {
         setErrors({ form: "Incorrect email or password. Please try again." });

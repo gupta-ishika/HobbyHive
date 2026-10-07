@@ -1,4 +1,10 @@
+import { useState } from "react";
+
 export default function Avatar({ src, alt = "User", size = "md", status, bordered = true }) {
+  // failedSrc (not a boolean) scopes the error to the URL that failed, so
+  // changing src never flashes initials for a URL that hasn't failed.
+  const [failedSrc, setFailedSrc] = useState(null);
+  const failed = failedSrc === src;
   const sizes = {
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
@@ -14,11 +20,12 @@ export default function Avatar({ src, alt = "User", size = "md", status, bordere
 
   return (
     <div className="relative inline-flex shrink-0">
-      {src ? (
+      {src && !failed ? (
         <img
           src={src}
           alt={alt}
           loading="lazy"
+          onError={() => setFailedSrc(src)}
           className={`${sizes[size]} rounded-full object-cover ${bordered ? "ring-1 ring-black/5 shadow-sm" : ""} bg-secondary`}
         />
       ) : (

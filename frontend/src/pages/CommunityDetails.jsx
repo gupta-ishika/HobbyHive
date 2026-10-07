@@ -52,7 +52,7 @@ export default function CommunityDetails() {
       setCommunity(detail);
       const [postsData, eventsData] = await Promise.all([
         listPosts({ community_id: id, limit: 50 }).catch(() => []),
-        listEvents({ community_id: id, limit: 10 }).catch(() => []),
+        listEvents({ community_id: id, upcoming_only: true, limit: 10 }).catch(() => []),
       ]);
       setPosts(postsData);
       setEvents(eventsData);
