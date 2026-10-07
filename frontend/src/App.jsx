@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useParams } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./components/Toast";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -12,6 +12,18 @@ import Communities from "./pages/Communities";
 import CommunityDetails from "./pages/CommunityDetails";
 import Events from "./pages/Events";
 import Profile from "./pages/Profile";
+
+// Remount detail pages when :id changes so no stale entity flashes.
+// (Both pages start with loading=true, so the skeleton covers the gap.)
+function CommunityDetailsById() {
+  const { id } = useParams();
+  return <CommunityDetails key={id} />;
+}
+
+function ProfileById() {
+  const { id } = useParams();
+  return <Profile key={id} />;
+}
 
 export default function App() {
   return (
@@ -32,11 +44,11 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/onboarding/hobbies" element={<HobbySelectionMinimal />} />
             <Route path="/feed" element={<Feed />} />
-            <Route path="/communities/:id" element={<CommunityDetails />} />
+            <Route path="/communities/:id" element={<CommunityDetailsById />} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/events" element={<Events />} />
             <Route path="/profile/me" element={<Profile />} />
-            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/profile/:id" element={<ProfileById />} />
           </Route>
 
           <Route
