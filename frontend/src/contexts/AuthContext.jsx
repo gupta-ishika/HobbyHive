@@ -1,32 +1,83 @@
-﻿import { createContext, useContext, useState } from "react";
+﻿import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { fetchMe, login as apiLogin, signup as apiSignup } from "../api/auth";
+import { TOKEN_KEY, UNAUTHORIZED_EVENT, getToken, setToken } from "../api/client";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("hobby-hub-user");
-    if (stored) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Restore session: a stored 7-day JWT is validated against /auth/me.
+  useEffect(() => {
+    localStorage.removeItem("hobby-hub-user"); // legacy mock key
+    let cancelled = false;
+    async function restore() {
+      if (!getToken()) {
+        setLoading(false);
+        return;
+      }
       try {
-        return JSON.parse(stored);
+        const me = await fetchMe();
+        if (!cancelled) setUser(me);
       } catch {
-        localStorage.removeItem("hobby-hub-user");
+        // 401 auto-clears the token in the API client; just drop the session.
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
-    return null;
-  });
+    restore();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("hobby-hub-user", JSON.stringify(userData));
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
+    setToken(null);
     setUser(null);
-    localStorage.removeItem("hobby-hub-user");
-  };
+  }, []);
+
+  // Backend 401 (expired/invalid token) -> auto-logout everywhere.
+  useEffect(() => {
+    window.addEventListener(UNAUTHORIZED_EVENT, logout);
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, logout);
+  }, [logout]);
+
+  const login = useCallback(async (email, password) => {
+    const data = await apiLogin({ email, password });
+    setToken(data.access_token);
+    setUser(data.user);
+    return data.user;
+  }, []);
+
+  const signup = useCallback(async ({ username, name, email, password }) => {
+    const data = await apiSignup({ username, name, email, password });
+    setToken(data.access_token);
+    setUser(data.user);
+    return data.user;
+  }, []);
+
+  const refreshUser = useCallback(async () => {
+    const me = await fetchMe();
+    setUser(me);
+    return me;
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token: getToken(),
+        isAuthenticated: !!user,
+        loading,
+        login,
+        signup,
+        logout,
+        refreshUser,
+        setUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -38,3 +89,4 @@ export function useAuth() {
   return ctx;
 }
 
+export { TOKEN_KEY };

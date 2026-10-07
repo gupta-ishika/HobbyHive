@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ToastProvider } from "./components/Toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import HobbySelectionMinimal from "./pages/HobbySelectionMinimal";
@@ -13,7 +14,8 @@ import Profile from "./pages/Profile";
 
 export default function App() {
   return (
-    <AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
@@ -50,5 +52,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ToastProvider>
   );
 }

@@ -7,12 +7,13 @@ import Card from "../components/Card";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const [form, setForm] = useState({ name: "", username: "", email: "", password: "", confirm: "" });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = "Full name is required";
@@ -39,9 +40,28 @@ export default function Signup() {
     }
 
     setErrors({});
-    // per new spec: Signup → Hobby Selection → Feed
-    login({ name: form.name, username: form.username, email: form.email, avatar: "https://i.pravatar.cc/100?img=5" });
-    navigate("/onboarding/hobbies");
+    setSubmitting(true);
+    try {
+      // Signup → Hobby Selection → Feed
+      await signup({
+        username: form.username.trim(),
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
+      navigate("/onboarding/hobbies");
+    } catch (err) {
+      const detail = (err?.detail || "").toLowerCase();
+      if (err?.status === 409 && detail.includes("email")) {
+        setErrors({ email: "An account with this email already exists." });
+      } else if (err?.status === 409) {
+        setErrors({ username: "This username is already taken." });
+      } else {
+        setErrors({ form: err?.detail || "Something went wrong. Please try again." });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -59,13 +79,20 @@ export default function Signup() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          {errors.form && (
+            <p role="alert" className="text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+              {errors.form}
+            </p>
+          )}
           <Input label="Full name" name="name" placeholder="Alex Morgan" value={form.name} onChange={update("name")} error={errors.name} icon="person" autoComplete="name" />
           <Input label="Username" name="username" placeholder="alexmorgan" value={form.username} onChange={update("username")} error={errors.username} icon="alternate_email" autoComplete="username" />
           <p className="text-xs text-text/50 -mt-2 px-1">Your permanent public identity — choose wisely.</p>
           <Input label="Email" type="email" name="email" placeholder="you@example.com" value={form.email} onChange={update("email")} error={errors.email} icon="mail" autoComplete="email" />
           <Input label="Password" type="password" name="password" placeholder="••••••••" value={form.password} onChange={update("password")} error={errors.password} icon="lock" autoComplete="new-password" />
           <Input label="Confirm password" type="password" name="confirm" placeholder="••••••••" value={form.confirm} onChange={update("confirm")} error={errors.confirm} icon="lock" autoComplete="new-password" />
-          <Button type="submit" className="w-full" size="lg">Create account</Button>
+          <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+            {submitting ? "Creating account…" : "Create account"}
+          </Button>
           <p className="text-center text-xs text-text/50 px-2 leading-relaxed">
             By signing up you agree to our <a className="text-primary font-semibold hover:underline" href="#">Terms</a> and{" "}
             <a className="text-primary font-semibold hover:underline" href="#">Privacy</a>

@@ -1,9 +1,9 @@
 # Project Memory & Active State — HobbyHive
 
 ## Current Project Status
-- **Current Phase:** Phase 4 (Frontend API Integration & Data Sync)
-- **Active Task:** Ready to begin `TASK-012`
-- **Frontend Status:** React 19 + Vite + Tailwind v4 UI views completed with mock static data.
+- **Current Phase:** Phase 5 (Verification & Quality Assurance)
+- **Active Task:** Ready to begin `TASK-019`
+- **Frontend Status:** React 19 + Vite + Tailwind v4 UI fully wired to live backend (auth, onboarding, feed, communities, events, profile). Mock `src/data/` no longer imported anywhere.
 - **Backend Status:** Phase 1, Phase 2 & Phase 3 complete and verified with automated test suite (11/11 passed). Auth, onboarding, communities, posts, and events endpoints fully functional.
 
 ---
@@ -34,9 +34,17 @@
 ---
 
 ## Immediate Next Step
-- Execute `TASK-012`: Create Frontend API Client (`frontend/src/api/client.js`) and endpoint modules (`auth.js`, `communities.js`, `posts.js`, `events.js`, `users.js`).
+- Execute `TASK-019`: Run authorization edge-case test suite (User A vs User B permissions, duplicate constraints, cascade deletes).
 
-## Phase 3 Notes (completed 2026-10-07)
+## Phase 4 Notes (completed 2026-10-07)
+- `TASK-012`: Added `src/api/client.js` (fetch wrapper, `VITE_API_URL` → `/api/v1` proxy fallback, `ApiError`, 401 auto-logout event) + `auth/users/communities/posts/events` modules; Vite `/api` proxy in `vite.config.js`; `frontend/.env.example`; `Toast` provider + `timeAgo` utils.
+- `TASK-013`: `AuthContext` now uses real signup/login/me, 7-day JWT in `localStorage` (`hobbyhive-token`), session restore, 401 auto-logout; `Login/Signup` show server errors (401/409) with submitting states; `ProtectedRoute` waits for restore.
+- `TASK-014`: Onboarding fetches `GET /users/hobbies`, persists via `POST /users/hobbies`, skeletons + error/ retry.
+- `TASK-015`: Feed fetches posts/communities/upcoming events; like toggle, nested comments + submit, composer with community picker, joined-community sidebar + joinable suggestions. `PostCard`/`CreatePost` extended backward-compatibly; shared `usePostActions` hook.
+- `TASK-016`: Communities list (server search, category chips, pagination, join/leave, create modal); Details (detail/members/posts/events/about tabs, join/leave, composer, 404 handling).
+- `TASK-017`: Events (upcoming filter, My-RSVPs filter, Going/Interested toggle + cancel, live counts).
+- `TASK-018`: Profile (own + public, live stats, user posts, edit modal, logout).
+- Verification: `npm run lint` 0 errors, `npm run build` succeeds, no `src/data/` imports remain.
 - `TASK-009`: Added `app/api/v1/communities.py` (list/create/detail/update/delete/join/leave) wired into v1 router; reused existing `community_service.py` (owner-only 403, duplicate-name 409, idempotent join, owner-leave 400).
 - `TASK-010`: Added `app/services/post_service.py` + `app/api/v1/posts.py` (feed filters, author-only edit/delete, like toggle, nested comments with parent validation); added `PostUpdate` schema + `CommentResponse.model_rebuild()`.
 - `TASK-011`: Added `app/services/event_service.py` + `app/api/v1/events.py` (upcoming/search filters, creator-only edit/delete, RSVP upsert, cancel 404, past-date 400).

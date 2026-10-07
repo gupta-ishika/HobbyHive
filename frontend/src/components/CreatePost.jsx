@@ -8,10 +8,15 @@ export default function CreatePost({
   placeholder = "Share your hobby...",
   variant = "full",
   disabled = false,
+  // Optional backend wiring: community picker for the post target.
+  communities = null,
+  communityId = null,
+  onCommunityChange,
+  posting = false,
 }) {
   const { user } = useAuth();
   const [text, setText] = useState("");
-  const canPost = text.trim().length > 0 && !disabled;
+  const canPost = text.trim().length > 0 && !disabled && !posting;
 
   const handlePost = () => {
     if (canPost && onPost) {
@@ -27,7 +32,7 @@ export default function CreatePost({
           disabled ? "opacity-60" : "opacity-100"
         }`}
       >
-        <Avatar src={user?.avatar} alt={user?.name || "You"} size="md" />
+        <Avatar src={user?.avatar_url || user?.avatar} alt={user?.name || "You"} size="md" />
         <input
           disabled={disabled}
           placeholder={placeholder}
@@ -57,8 +62,25 @@ export default function CreatePost({
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-sm p-4 md:p-5">
       <div className="flex gap-3">
-        <Avatar src={user?.avatar} alt={user?.name || "You"} size="md" />
+        <Avatar src={user?.avatar_url || user?.avatar} alt={user?.name || "You"} size="md" />
         <div className="flex-1 min-w-0">
+          {communities && (
+            <label className="block mb-2.5">
+              <span className="sr-only">Post in community</span>
+              <select
+                value={communityId || ""}
+                onChange={(e) => onCommunityChange && onCommunityChange(Number(e.target.value))}
+                disabled={disabled || posting}
+                className="w-full sm:w-auto bg-background border border-border rounded-full px-3.5 py-2 text-sm font-medium text-text focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 disabled:opacity-60 transition"
+              >
+                {communities.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <textarea
             rows={3}
             placeholder={placeholder}
@@ -93,7 +115,7 @@ export default function CreatePost({
             <div className="flex items-center gap-3">
               <span className="text-xs text-text/40 hidden sm:block">{text.length > 0 ? `${text.length} characters` : "Share something"}</span>
               <Button size="sm" disabled={!canPost} onClick={handlePost}>
-                Post
+                {posting ? "Posting…" : "Post"}
               </Button>
             </div>
           </div>

@@ -1,28 +1,168 @@
-﻿import { useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import CommunityCard from "../components/CommunityCard";
-import communities from "../data/communities";
 import Button from "../components/Button";
+import Input from "../components/Input";
 import MobileBottomNav from "../components/MobileBottomNav";
 import EmptyState from "../components/EmptyState";
+import { CardSkeleton } from "../components/Skeleton";
+import { useToast } from "../components/Toast";
+import { listCommunities, createCommunity, joinCommunity, leaveCommunity } from "../api/communities";
 
-const filters = ["All", "Photography", "Cooking", "Gaming", "Pottery", "Woodworking", "Gardening", "Painting", "Music", "Cycling"];
+const PAGE_SIZE = 9;
+
+function CreateCommunityModal({ onClose, onCreated }) {
+  const { toast } = useToast();
+  const [form, setForm] = useState({ name: "", description: "", category: "" });
+  const [errors, setErrors] = useState({});
+  const [creating, setCreating] = useState(false);
+  const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
+    if (form.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters.";
+    if (!form.description.trim()) newErrors.description = "Description is required.";
+    if (!form.category.trim()) newErrors.category = "Category is required.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    setCreating(true);
+    try {
+      const created = await createCommunity({
+        name: form.name.trim(),
+        description: form.description.trim(),
+        category: form.category.trim(),
+      });
+      toast(`Community "${created.name}" created!`);
+      onCreated(created);
+    } catch (err) {
+      setErrors({ form: err?.detail || "Could not create the community." });
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Create community">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-6 md:p-8">
+        <h2 className="font-headline font-black text-xl text-text">Start a community</h2>
+        <p className="text-sm text-text/60 mt-1">Create a new space for your passion.</p>
+        <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
+          {errors.form && (
+            <p role="alert" className="text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+              {errors.form}
+            </p>
+          )}
+          <Input label="Name" name="name" placeholder="Downtown Kiln Club" value={form.name} onChange={update("name")} error={errors.name} icon="groups" />
+          <Input label="Category" name="category" placeholder="Pottery" value={form.category} onChange={update("category")} error={errors.category} icon="label" />
+          <div>
+            <label htmlFor="community-description" className="block text-sm font-semibold text-text mb-1.5">Description</label>
+            <textarea
+              id="community-description"
+              rows={3}
+              placeholder="What is this community about?"
+              value={form.description}
+              onChange={update("description")}
+              className="w-full bg-background border border-border rounded-2xl p-3.5 text-sm text-text placeholder:text-text/40 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none transition"
+            />
+            {errors.description && <p className="text-xs text-red-600 mt-1.5">{errors.description}</p>}
+          </div>
+          <div className="flex gap-3 pt-1">
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={creating}>
+              Cancel
+            </Button>
+            <Button type="submit" className="flex-1" disabled={creating}>
+              {creating ? "Creating…" : "Create"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function Communities() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [communities, setCommunities] = useState([]);
   const [active, setActive] = useState("All");
   const [query, setQuery] = useState("");
-  const [visibleCount, setVisibleCount] = useState(9);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [busyIds, setBusyIds] = useState({});
+  const [showCreate, setShowCreate] = useState(false);
+  const searchTimer = useRef(null);
 
-  const filtered = communities.filter((c) => {
-    const matchFilter = active === "All" || c.hobby === active;
-    const matchQuery = !query || c.name.toLowerCase().includes(query.toLowerCase()) || c.hobby.toLowerCase().includes(query.toLowerCase()) || c.description.toLowerCase().includes(query.toLowerCase());
-    return matchFilter && matchQuery;
-  });
+  // Debounce search input -> server-side query.
+  useEffect(() => {
+    clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => setDebouncedQuery(query.trim()), 400);
+    return () => clearTimeout(searchTimer.current);
+  }, [query]);
 
-  const visible = filtered.slice(0, visibleCount);
-  const canLoadMore = visibleCount < filtered.length;
+  const load = useCallback(async ({ append = false, offset = 0 } = {}) => {
+    if (append) setLoadingMore(true);
+    else {
+      setLoading(true);
+      setLoadError("");
+    }
+    try {
+      const data = await listCommunities({
+        category: active === "All" ? undefined : active,
+        search: debouncedQuery || undefined,
+        limit: PAGE_SIZE,
+        offset,
+      });
+      setHasMore(data.length === PAGE_SIZE);
+      setCommunities((prev) => (append ? [...prev, ...data] : data));
+    } catch (err) {
+      if (!append) setLoadError(err?.detail || "Could not load communities.");
+      else toast(err?.detail || "Could not load more.", "error");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [active, debouncedQuery, toast]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const categories = useMemo(() => {
+    const seen = new Set();
+    for (const c of communities) if (c.category) seen.add(c.category);
+    return ["All", ...[...seen].filter((c) => c !== "All").sort()];
+  }, [communities]);
+
+  const handleToggleJoin = async (community) => {
+    if (busyIds[community.id]) return;
+    setBusyIds((p) => ({ ...p, [community.id]: true }));
+    try {
+      const updated = community.is_member
+        ? await leaveCommunity(community.id)
+        : await joinCommunity(community.id);
+      setCommunities((prev) => prev.map((c) => (c.id === community.id ? updated : c)));
+      toast(community.is_member ? `Left ${community.name}.` : `Joined ${updated.name}!`);
+    } catch (err) {
+      toast(err?.detail || "Could not update membership.", "error");
+    } finally {
+      setBusyIds((p) => ({ ...p, [community.id]: false }));
+    }
+  };
+
+  const handleCreated = (created) => {
+    setShowCreate(false);
+    setCommunities((prev) => [created, ...prev]);
+    navigate(`/communities/${created.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,10 +178,7 @@ export default function Communities() {
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text/40">search</span>
           <input
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setVisibleCount(9);
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search communities, hobbies..."
             aria-label="Search communities"
             className="w-full bg-white border border-border rounded-full pl-11 pr-4 py-3 text-sm text-text placeholder:text-text/40 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm"
@@ -49,13 +186,10 @@ export default function Communities() {
         </div>
 
         <div className="mt-5 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {filters.map((f) => (
+          {categories.map((f) => (
             <button
               key={f}
-              onClick={() => {
-                setActive(f);
-                setVisibleCount(9);
-              }}
+              onClick={() => setActive(f)}
               aria-pressed={active === f}
               className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition ${active === f ? "bg-primary text-background border-primary shadow-sm" : "bg-white text-text/70 border-border hover:border-border-strong hover:text-text"}`}
             >
@@ -65,35 +199,60 @@ export default function Communities() {
         </div>
       </div>
 
-      {/* Community Grid 3x4 per wireframe */}
+      {/* Community Grid */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 pt-6 pb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visible.map((c) => (
-            <CommunityCard
-              key={c.id}
-              title={c.name}
-              hobby={c.hobby}
-              members={c.members}
-              description={c.description}
-              image={c.image}
-              icon={c.icon}
-              onClick={() => navigate(`/communities/${c.id}`)}
-            />
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
-          <div className="mt-8">
-            <EmptyState icon="search_off" title="No communities found" description={`No results for "${query}" in ${active}. Try a different search or filter.`} action={<Button variant="secondary" onClick={() => { setQuery(""); setActive("All"); }}>Clear filters</Button>} />
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Loading communities">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CardSkeleton key={i} />
+            ))}
           </div>
-        )}
+        ) : loadError ? (
+          <EmptyState
+            icon="cloud_off"
+            title="Could not load communities"
+            description={loadError}
+            action={<Button variant="secondary" onClick={() => load()}>Try again</Button>}
+          />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {communities.map((c) => (
+                <CommunityCard
+                  key={c.id}
+                  title={c.name}
+                  hobby={c.category}
+                  members={c.members_count}
+                  description={c.description}
+                  image={c.avatar_url || c.banner_url}
+                  joined={c.is_member}
+                  joining={!!busyIds[c.id]}
+                  onJoin={() => handleToggleJoin(c)}
+                  onClick={() => navigate(`/communities/${c.id}`)}
+                />
+              ))}
+            </div>
 
-        {canLoadMore && (
-          <div className="flex justify-center mt-8">
-            <Button variant="secondary" size="md" className="px-8" onClick={() => setVisibleCount((v) => Math.min(v + 6, filtered.length))}>
-              Load more
-            </Button>
-          </div>
+            {communities.length === 0 && (
+              <div className="mt-8">
+                <EmptyState icon="search_off" title="No communities found" description={debouncedQuery || active !== "All" ? `No results for "${debouncedQuery}" in ${active}. Try a different search or filter.` : "No communities yet — be the first to start one!"} action={(debouncedQuery || active !== "All") && <Button variant="secondary" onClick={() => { setQuery(""); setActive("All"); }}>Clear filters</Button>} />
+              </div>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  className="px-8"
+                  disabled={loadingMore}
+                  onClick={() => load({ append: true, offset: communities.length })}
+                >
+                  {loadingMore ? "Loading…" : "Load more"}
+                </Button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Start a Community */}
@@ -104,12 +263,14 @@ export default function Communities() {
             </div>
             <h3 className="font-headline font-bold text-xl text-text">Start a community</h3>
             <p className="text-sm text-text/60 mt-2 max-w-md mx-auto leading-relaxed">Don&apos;t see what you&apos;re looking for? Create a new space for your passion.</p>
-            <Button size="md" className="mt-6 px-8">
+            <Button size="md" className="mt-6 px-8" onClick={() => setShowCreate(true)}>
               Create community
             </Button>
           </div>
         </div>
       </div>
+
+      {showCreate && <CreateCommunityModal onClose={() => setShowCreate(false)} onCreated={handleCreated} />}
 
       <footer className="border-t border-border bg-background mt-12">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text/60">
@@ -129,4 +290,3 @@ export default function Communities() {
     </div>
   );
 }
-

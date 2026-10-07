@@ -19,7 +19,7 @@ function HobbyIcon({ hobby, icon }) {
   return <span className="material-symbols-outlined text-sm">{map[hobby] || "label"}</span>;
 }
 
-export default function CommunityCard({ title, hobby = "Pottery", members = 128, description = "", image, icon, onJoin, onClick }) {
+export default function CommunityCard({ title, hobby = "Pottery", members = 128, description = "", image, icon, joined = false, joining = false, onJoin, onClick }) {
   const memberLabel = typeof members === "number" && members >= 1000 ? `${(members / 1000).toFixed(1)}k` : `${members}`;
   return (
     <div
@@ -68,12 +68,14 @@ export default function CommunityCard({ title, hobby = "Pottery", members = 128,
           <Button
             size="sm"
             className="px-5"
+            variant={joined ? "secondary" : "primary"}
+            disabled={joining || !onJoin}
             onClick={(e) => {
               e.stopPropagation();
               if (onJoin) onJoin();
             }}
           >
-            Join
+            {joining ? "…" : joined ? "Joined" : "Join"}
           </Button>
         </div>
       </div>

@@ -11,8 +11,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!email.trim()) {
@@ -32,11 +33,19 @@ export default function Login() {
     }
 
     setErrors({});
-    // TODO(auth): Mock stub — always logs in as a fixed identity regardless of entered
-    // credentials. Replace with real auth once the backend is wired up.
-    // Note: Signup.jsx already forwards the real form data; keep both in sync.
-    login({ name: "Alex Morgan", username: "alexmorgan", avatar: "https://i.pravatar.cc/100?img=5" });
-    navigate("/feed");
+    setSubmitting(true);
+    try {
+      await login(email.trim(), password);
+      navigate("/feed");
+    } catch (err) {
+      if (err?.status === 401) {
+        setErrors({ form: "Incorrect email or password. Please try again." });
+      } else {
+        setErrors({ form: err?.detail || "Something went wrong. Please try again." });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -55,6 +64,11 @@ export default function Login() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          {errors.form && (
+            <p role="alert" className="text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+              {errors.form}
+            </p>
+          )}
           <Input
             label="Email"
             type="email"
@@ -80,7 +94,9 @@ export default function Login() {
           <div className="flex justify-end -mt-1">
             <a href="#" className="text-xs font-semibold text-primary hover:underline">Forgot password?</a>
           </div>
-          <Button type="submit" className="w-full" size="lg">Continue</Button>
+          <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+            {submitting ? "Signing in…" : "Continue"}
+          </Button>
           <p className="text-center text-sm text-text/60">
             Don&apos;t have an account?{" "}
             <Link to="/signup" className="text-primary font-semibold hover:underline">

@@ -18,13 +18,13 @@
 - [x] **TASK-011:** Implement Events Service & API (`GET/POST /api/v1/events`, `DELETE /api/v1/events/{id}` with creator-only checks, `POST /api/v1/events/{id}/rsvp`, `DELETE /api/v1/events/{id}/rsvp`).
 
 ## Phase 4: Frontend API Integration & Data Sync
-- [ ] **TASK-012:** Create Frontend API Client (`frontend/src/api/client.js`) and endpoint modules (`auth.js`, `communities.js`, `posts.js`, `events.js`, `users.js`).
-- [ ] **TASK-013:** Connect `AuthContext.jsx` with real backend auth endpoints, store 7-day JWT in `localStorage`, and handle 401 auto-logout.
-- [ ] **TASK-014:** Wire up Onboarding (`HobbySelectionMinimal.jsx`) with backend user hobbies endpoint.
-- [ ] **TASK-015:** Wire up Feed page with real backend posts and likes toggle/comment submission.
-- [ ] **TASK-016:** Wire up Communities & Community Details pages with real join/leave actions.
-- [ ] **TASK-017:** Wire up Events page with real RSVP functionality.
-- [ ] **TASK-018:** Wire up Profile page with dynamic user statistics and activity.
+- [x] **TASK-012:** Create Frontend API Client (`frontend/src/api/client.js`) and endpoint modules (`auth.js`, `communities.js`, `posts.js`, `events.js`, `users.js`).
+- [x] **TASK-013:** Connect `AuthContext.jsx` with real backend auth endpoints, store 7-day JWT in `localStorage`, and handle 401 auto-logout.
+- [x] **TASK-014:** Wire up Onboarding (`HobbySelectionMinimal.jsx`) with backend user hobbies endpoint.
+- [x] **TASK-015:** Wire up Feed page with real backend posts and likes toggle/comment submission.
+- [x] **TASK-016:** Wire up Communities & Community Details pages with real join/leave actions.
+- [x] **TASK-017:** Wire up Events page with real RSVP functionality.
+- [x] **TASK-018:** Wire up Profile page with dynamic user statistics and activity.
 
 ## Phase 5: Verification & Quality Assurance
 - [ ] **TASK-019:** Run authorization edge-case test suite (User A vs User B permissions, duplicate constraints, cascade deletes).
